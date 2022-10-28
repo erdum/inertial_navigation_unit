@@ -4,7 +4,7 @@
 #include <TinyGPSPlus.h>
 
 Adafruit_SSD1306 led(128, 64, &Wire, -1);
-TinyGPSPlus gps();
+TinyGPSPlus gps;
 
 unsigned long prevTime = 0;
 unsigned int diskCounter = 0;
