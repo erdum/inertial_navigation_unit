@@ -162,15 +162,15 @@ void storeLocation (float lat, float lng) {
 }
 
 void displayTime(byte hour, byte minute, byte second) {
-  
+
   if (hour < 10) led.print('0');
   led.print(hour);
   led.print(':');
-  
+
   if (minute < 10) led.print('0');
   led.print(minute);
   led.print(':');
- 
+
   if (second < 10) led.print('0');
   led.println(second);
 }
@@ -179,16 +179,16 @@ void setup() {
   Serial.begin(9600);
   led.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   led.clearDisplay();
-  
+
   led.drawBitmap(0, 0, allah, 128, 64, 1);
   led.display();
   delay(3000);
- 
+
   led.clearDisplay();
   led.drawBitmap(0, 0, pakistan_flag, 128, 64, 1);
   led.display();
   delay(3000);
-  
+
   led.setTextColor(SSD1306_WHITE);
 }
 
@@ -197,28 +197,33 @@ void loop() {
   led.setCursor(0, 0);
 
   while (Serial.available()) {
-    gps.encode(Serial.available());
+    gps.encode(Serial.read());
 
-    if (gps.time.isValid() &&
-        gps.location.isValid() &&
-        gps.speed.isValid() &&
-        gps.satellites.isValid())
-    {
+    if (gps.time.isValid()) {
       hour = gps.time.hour();
       minute = gps.time.minute();
       second = gps.time.second();
+    }
 
+    if (gps.location.isValid()) {
       lat = gps.location.lat();
       lng = gps.location.lng();
-      speed = gps.speed.kmph();
+    }
 
+    if (gps.speed.isValid()) {
+      speed = gps.speed.kmph();
+    }
+
+    if (gps.satellites.isValid()) {
       numOfSats = gps.satellites.value();
     }
   }
 
   if (millis() - prevTime >= 15000 && lat != 0.0 && lng != 0.0) {
 
-    if (diskCounter < EEPROM.length()) storeLocation(lat, lng);
+    if (diskCounter < EEPROM.length()) {
+      storeLocation(lat, lng);
+    }
     prevTime = millis();
   }
 
@@ -238,5 +243,7 @@ void loop() {
 
   led.print("Sats: ");
   led.println(numOfSats);
+
+  led.println(millis() / 1000);
   led.display();
 }
