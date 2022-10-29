@@ -151,7 +151,7 @@ byte hour = 0;
 byte minute = 0;
 byte second = 0;
 byte numOfSats = 0;
-float alttitude = 0;
+float altitude = 0;
 
 void storeLocation (float lat, float lng) {
   EEPROM.put(diskCounter, lat);
@@ -214,12 +214,16 @@ void loop() {
       speed = gps.speed.kmph();
     }
 
+    if (gps.altitude.isValid()) {
+      altitude = gps.altitude.meters();
+    }
+
     if (gps.satellites.isValid()) {
       numOfSats = gps.satellites.value();
     }
   }
 
-  if (millis() - prevTime >= 15000 && lat != 0.0 && lng != 0.0) {
+  if (millis() - prevTime >= 5000 && lat != 0.0 && lng != 0.0) {
 
     if (diskCounter < EEPROM.length()) {
       storeLocation(lat, lng);
@@ -239,7 +243,7 @@ void loop() {
   led.println('%');
 
   led.print("Alt: ");
-  led.println(alttitude, 2);
+  led.println(altitude, 2);
 
   led.print("Sats: ");
   led.println(numOfSats);
