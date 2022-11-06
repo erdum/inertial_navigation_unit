@@ -1,4 +1,4 @@
-#include <EEPROM.h>
+#include <SD.h>
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <TinyGPSPlus.h>
@@ -143,7 +143,6 @@ Adafruit_SSD1306 led(128, 64, &Wire, -1);
 TinyGPSPlus gps;
 
 unsigned long prevTime = 0;
-unsigned int diskCounter = 0;
 float lat = 0.0;
 float lng = 0.0;
 float speed = 0.0;
@@ -152,14 +151,6 @@ byte minute = 0;
 byte second = 0;
 byte numOfSats = 0;
 float altitude = 0;
-
-void storeLocation (float lat, float lng) {
-  EEPROM.put(diskCounter, lat);
-  diskCounter += sizeof(float);
-
-  EEPROM.put(diskCounter, lng);
-  diskCounter += sizeof(float);
-}
 
 void displayTime(byte hour, byte minute, byte second) {
 
@@ -223,11 +214,8 @@ void loop() {
     }
   }
 
-  if (millis() - prevTime >= 5000 && lat != 0.0 && lng != 0.0) {
+  if (millis() - prevTime >= 2000 && lat != 0.0 && lng != 0.0) {
 
-    if (diskCounter < EEPROM.length()) {
-      storeLocation(lat, lng);
-    }
     prevTime = millis();
   }
 
@@ -238,9 +226,6 @@ void loop() {
   displayTime(hour, minute, second);
 
   led.setTextSize(1);
-  led.print("Disk: ");
-  led.print((float) diskCounter / 1024.0 * 100.0, 0);
-  led.println('%');
 
   led.print("Alt: ");
   led.println(altitude, 2);
