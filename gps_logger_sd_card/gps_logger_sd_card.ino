@@ -1,43 +1,23 @@
-#include <Adafruit_SSD1306.h>
 #include <Wire.h>
+#include <Adafruit_SSD1306.h>
 #include <SPI.h>
 #include <SD.h>
+#include <TinyGPSPlus.h>
 
-Adafruit_SSD1306 led(128, 64, &Wire, -1);
-
-void setupDisplay(Adafruit_SSD1306 led) {
-  led.begin(SSD1306_SWITCHCAPVCC, 0x3c);
-  led.clearDisplay();
-  led.setTextColor(SSD1306_WHITE);
-  led.setTextSize(2);
-  led.setCursor(0, 0);
-  led.println("Allah");
-  unsigned int currentTime = millis();
-  unsigned int counter = 0;
-  while (millis() > currentTime + 3000) {
-    led.println(counter);
-    led.display();
-    counter++;
-  }
-  led.clearDisplay();
-  led.setTextSize(1);
-  led.setCursor(0, 0);
-}
-
-File mountDisk() {
-  sprintf(filename, "%02d%02d%02d.csv", year, month, day);
-  SD.begin(10);
-  return SD.open("erdum.csv", FILE_WRITE);
+Adafruit_SSD1306 setupDisplay() {
+  Adafruit_SSD1306 display(128, 32, &Wire, -1);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c);
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextSize(1);
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  return display;
 }
 
 void setup() {
-  setupDisplay(led);
-  File disk = mountDisk();
-  disk.println("lat, long");
-  disk.close();
+  Adafruit_SSD1306 oled = setupDisplay();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
 }
